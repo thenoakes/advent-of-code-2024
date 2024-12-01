@@ -25,8 +25,9 @@ const getData = async () => {
   };
 };
 
+const { list1, list2 } = await getData();
+
 const solvePart1 = async () => {
-  const { list1, list2 } = await getData();
   return range(list1.length).reduce((acc, nextIndex) => {
     const distance = Math.abs(list1[nextIndex] - list2[nextIndex]);
     return acc + distance;
@@ -34,10 +35,10 @@ const solvePart1 = async () => {
 };
 
 const solvePart2 = async () => {
-  const { list1, list2 } = await getData();
   const list2Frequency = list2.reduce((acc, val) => {
     return acc.has(val) ? acc.set(val, acc.get(val)! + 1) : acc.set(val, 1);
   }, new Map<number, number>());
+
   return list1.reduce((acc, val) => {
     const matches = list2Frequency.get(val) ?? 0;
     return acc + val * matches;
