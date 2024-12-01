@@ -26,16 +26,16 @@ const getData = async () => {
   };
 };
 
-const solve = getData().then(({ list1, list2, count }) => {
+const solve = async () => {
+  const { list1, list2, count } = await getData();
   return range(count).reduce((acc, nextIndex) => {
     const distance = Math.abs(list1[nextIndex] - list2[nextIndex]);
     return acc + distance;
   }, 0);
-});
+};
 
 export { solve };
 
 // pnpm tsx src/day1/index.ts
-solve.then((result) => {
-  console.log(result);
-});
+const result = await solve();
+console.log(result);
