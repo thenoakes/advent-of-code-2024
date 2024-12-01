@@ -22,20 +22,33 @@ const getData = async () => {
   return {
     list1: list1.toSorted(),
     list2: list2.toSorted(),
-    count: list1.length,
   };
 };
 
-const solve = async () => {
-  const { list1, list2, count } = await getData();
-  return range(count).reduce((acc, nextIndex) => {
+const solvePart1 = async () => {
+  const { list1, list2 } = await getData();
+  return range(list1.length).reduce((acc, nextIndex) => {
     const distance = Math.abs(list1[nextIndex] - list2[nextIndex]);
     return acc + distance;
   }, 0);
 };
 
-export { solve };
+const solvePart2 = async () => {
+  const { list1, list2 } = await getData();
+  const list2Frequency = list2.reduce((acc, val) => {
+    return acc.has(val) ? acc.set(val, acc.get(val)! + 1) : acc.set(val, 1);
+  }, new Map<number, number>());
+  return list1.reduce((acc, val) => {
+    const matches = list2Frequency.get(val) ?? 0;
+    return acc + val * matches;
+  }, 0);
+};
+
+export { solvePart1, solvePart2 };
 
 // pnpm tsx src/day1/index.ts
-const result = await solve();
-console.log(result);
+const result1 = await solvePart1();
+console.log(`Total distance: ${result1}`);
+
+const result2 = await solvePart2();
+console.log(`Total similarity: ${result2}`);
