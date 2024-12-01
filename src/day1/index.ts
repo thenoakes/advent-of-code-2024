@@ -48,8 +48,7 @@ const solvePart2 = async () => {
 export { solvePart1, solvePart2 };
 
 // pnpm tsx src/day1/index.ts
-const result1 = await solvePart1();
-console.log(`Total distance: ${result1}`);
+const [part1, part2] = await Promise.all([solvePart1(), solvePart2()]);
 
-const result2 = await solvePart2();
-console.log(`Total similarity: ${result2}`);
+console.log(`Total distance: ${part1}`);
+console.log(`Total similarity: ${part2}`);
