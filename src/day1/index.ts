@@ -10,9 +10,9 @@ const getData = async () => {
   const list1 = <number[]>[],
     list2 = <number[]>[];
   await processInput(inputPath, (line) => {
-    const [val1, val2] = line.split("   ");
-    list1.push(parseInt(val1));
-    list2.push(parseInt(val2));
+    const [val1, val2] = line.split("   ").map((val) => parseInt(val, 10));
+    list1.push(val1);
+    list2.push(val2);
   });
 
   if (list1.length !== list2.length) {
