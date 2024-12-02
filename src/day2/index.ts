@@ -2,7 +2,6 @@ import { resolve } from "path";
 import { fileURLToPath } from "url";
 
 import processInput from "../lib/processor";
-import { report } from "process";
 
 const inputPath = resolve(fileURLToPath(import.meta.url), "..", "input.txt");
 
@@ -15,6 +14,7 @@ const getData = async () => {
     reports.push(levels);
   });
 
+  console.log(`Read ${reports.length} reports`);
   return reports;
 };
 
@@ -39,8 +39,30 @@ const data = await getData();
 
 const solvePart1 = async () => data.filter(isSafe).length;
 
-export { solvePart1 };
+const isSafeWithDampener = (report: Report) => {
+  if (isSafe(report)) {
+    return true;
+  }
+
+  for (let i = 0; i < report.length; i++) {
+    // New copy of the report with the i-th element removed
+    const dampened = [...report];
+    dampened.splice(i, 1);
+
+    if (isSafe(dampened)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const solvePart2 = async () => data.filter(isSafeWithDampener).length;
+
+export { solvePart1, solvePart2 };
 
 // pnpm tsx src/day2/index.ts
 const part1 = await solvePart1();
-console.log(`Safe paths: ${part1}`);
+console.log(`Safe reports: ${part1}`);
+
+const part2 = await solvePart2();
+console.log(`Safe reports (with dampener): ${part2}`);
