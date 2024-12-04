@@ -81,7 +81,66 @@ const solvePart1 = async () => {
   return count;
 };
 
-export { solvePart1 };
+/**
+ * Look for two intersecting 'MAS' sequcnes originating from a given set of co-ordinates corresponding
+ * to an 'A', given a function which derives the next and previous co-ordinates on both diagonals.
+ * Returns `true` if such a sequence is found, `false` otherwise.
+ */
+const findMasX = (
+  aCoord: Coord,
+  getMajorDiag: (current: Coord) => [Coord, Coord],
+  getMinorDiag: (current: Coord) => [Coord, Coord],
+) => {
+  const majorDiag = getMajorDiag(aCoord);
+  const minorDiag = getMinorDiag(aCoord);
+
+  if ([...majorDiag, ...minorDiag].some((coord) => !isValid(coord))) {
+    return false;
+  }
+
+  const majorDiagLetters = majorDiag.map(getLetter);
+  const minorDiagLetters = minorDiag.map(getLetter);
+
+  return (
+    majorDiagLetters.toSorted().join("") === "MS" &&
+    minorDiagLetters.toSorted().join("") === "MS"
+  );
+};
+
+const solvePart2 = async () => {
+  const aPositions = new Set<Coord>();
+  for (const row of range(dim)) {
+    for (const col of range(dim)) {
+      if (getLetter([row, col]) === "A") {
+        aPositions.add([row, col]);
+      }
+    }
+  }
+
+  let count = 0;
+  for (const aPos of aPositions) {
+    count += Number(
+      findMasX(
+        aPos,
+        ([row, col]) => [
+          [row + 1, col + 1],
+          [row - 1, col - 1],
+        ],
+        ([row, col]) => [
+          [row - 1, col + 1],
+          [row + 1, col - 1],
+        ],
+      ),
+    );
+  }
+
+  return count;
+};
+
+export { solvePart1, solvePart2 };
 
 const total = await solvePart1();
 console.log(`Instances of 'XMAS': ${total}`);
+
+const total2 = await solvePart2();
+console.log(`Instances of 'MAS in X formation': ${total2}`);
