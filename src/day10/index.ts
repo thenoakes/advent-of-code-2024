@@ -38,23 +38,22 @@ const fromKey = (key: CoordKey): Coord => {
   return { row, col };
 };
 
+const getNextPositions = ({ col, row }: Coord) =>
+  [
+    { row: row - 1, col },
+    { row: row + 1, col },
+    { row, col: col - 1 },
+    { row, col: col + 1 },
+  ].filter(
+    ({ row, col }) => row >= 0 && row < rowCount && col >= 0 && col < colCount,
+  );
+
 const mapTrailHead = (row: number, col: number) => {
   let positions = new Set<CoordKey>([toKey({ row, col })]);
   for (let i = 1; i <= 9; i++) {
     const newPositions = new Set<CoordKey>();
     for (const pos of positions) {
-      const { row, col } = fromKey(pos);
-      const nextPositions = [
-        { row: row - 1, col },
-        { row: row + 1, col },
-        { row, col: col - 1 },
-        { row, col: col + 1 },
-      ].filter(
-        ({ row, col }) =>
-          row >= 0 && row < rowCount && col >= 0 && col < colCount,
-      );
-
-      nextPositions.forEach((nextPos) => {
+      getNextPositions(fromKey(pos)).forEach((nextPos) => {
         if (data[nextPos.row][nextPos.col] === i) {
           newPositions.add(toKey(nextPos));
         }
@@ -93,18 +92,7 @@ const mapDistinctTrails = (row: number, col: number) => {
   for (let i = 1; i <= 9; i++) {
     const newJourneys = new Set<string>();
     for (const j of journeys) {
-      const { row, col } = journeyTip(j);
-      const nextPositions = [
-        { row: row - 1, col },
-        { row: row + 1, col },
-        { row, col: col - 1 },
-        { row, col: col + 1 },
-      ].filter(
-        ({ row, col }) =>
-          row >= 0 && row < rowCount && col >= 0 && col < colCount,
-      );
-
-      nextPositions.forEach((nextPos) => {
+      getNextPositions(journeyTip(j)).forEach((nextPos) => {
         if (data[nextPos.row][nextPos.col] === i) {
           newJourneys.add(addToJourney(j, nextPos));
         }
