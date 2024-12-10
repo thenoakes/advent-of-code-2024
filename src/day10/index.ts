@@ -74,3 +74,55 @@ const solvePart1 = async () => {
 
 const part1 = await solvePart1();
 log(`Total score is ${part1}`);
+
+const ARROW = "->";
+const addToJourney = (journey: string, coord: Coord) =>
+  journey.concat(ARROW, `${coord.row},${coord.col}`);
+
+const journeyTip = (journey: string): Coord => {
+  const [row, col] = journey
+    .split(ARROW)
+    .pop()!
+    .split(",")
+    .map((x) => parseInt(x, 10));
+  return { row, col };
+};
+
+const mapDistinctTrails = (row: number, col: number) => {
+  let journeys = new Set<string>([`${row},${col}`]);
+  for (let i = 1; i <= 9; i++) {
+    const newJourneys = new Set<string>();
+    for (const j of journeys) {
+      const { row, col } = journeyTip(j);
+      const nextPositions = [
+        { row: row - 1, col },
+        { row: row + 1, col },
+        { row, col: col - 1 },
+        { row, col: col + 1 },
+      ].filter(
+        ({ row, col }) =>
+          row >= 0 && row < rowCount && col >= 0 && col < colCount,
+      );
+
+      nextPositions.forEach((nextPos) => {
+        if (data[nextPos.row][nextPos.col] === i) {
+          newJourneys.add(addToJourney(j, nextPos));
+        }
+      });
+    }
+    journeys = newJourneys;
+  }
+
+  // Return the number of unique journey strings
+  return journeys.size;
+};
+
+const solvePart2 = async () => {
+  const scores = trailHeadMap.map(({ row, col }) =>
+    mapDistinctTrails(row, col),
+  );
+  return scores.reduce((acc, score) => acc + score, 0);
+};
+
+const part2 = await solvePart2();
+log(`Total score is ${part2}`);
